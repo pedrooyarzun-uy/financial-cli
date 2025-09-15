@@ -6,11 +6,17 @@ import (
 )
 
 func NewInput(label string, width int, color tcell.Color, background tcell.Color) *tview.InputField {
-	return tview.NewInputField().
+	input := tview.NewInputField().
 		SetLabel(label).
-		SetFieldWidth(width).
-		SetLabelColor(color).
-		SetFieldTextColor(color).
-		SetFieldBackgroundColor(background)
+		SetFieldWidth(width)
 
+	addColors(input, color)
+
+	return input
+}
+
+func addColors(input *tview.InputField, color tcell.Color) {
+	input.SetLabelColor(color).
+		SetFieldTextColor(color).
+		SetFieldBackgroundColor(tcell.ColorBlack)
 }
