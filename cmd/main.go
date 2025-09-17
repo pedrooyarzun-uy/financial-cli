@@ -7,9 +7,15 @@ import (
 )
 
 func main() {
-	login := ui.LoginPage()
 
 	app := tview.NewApplication()
+	pages := tview.NewPages()
+
+	login := ui.LoginPage(app, pages)
+	home := ui.HomePage(app, pages)
+
+	pages.AddPage("login", login, true, true)
+	pages.AddPage("home", home, true, false)
 
 	app.SetBeforeDrawFunc(func(screen tcell.Screen) bool {
 		screen.Clear()
@@ -17,7 +23,7 @@ func main() {
 		return false
 	})
 
-	if err := app.SetRoot(login, true).Run(); err != nil {
+	if err := app.SetRoot(pages, true).Run(); err != nil {
 		panic(err)
 	}
 }
