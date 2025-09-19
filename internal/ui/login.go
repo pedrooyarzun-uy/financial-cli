@@ -6,7 +6,7 @@ import (
 	"github.com/rivo/tview"
 )
 
-func LoginPage(app *tview.Application, pages *tview.Pages) *tview.Flex {
+func NewLoginPage(app *tview.Application, pages *tview.Pages) *tview.Flex {
 	email := components.NewInput("Email: ", 30, tcell.ColorGreen, tcell.ColorBlack, false)
 	password := components.NewInput("Password: ", 30, tcell.ColorGreen, tcell.ColorBlack, true)
 

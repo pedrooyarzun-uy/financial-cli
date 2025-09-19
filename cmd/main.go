@@ -11,8 +11,8 @@ func main() {
 	app := tview.NewApplication()
 	pages := tview.NewPages()
 
-	login := ui.LoginPage(app, pages)
-	home := ui.HomePage(app, pages)
+	login := ui.NewLoginPage(app, pages)
+	home := ui.NewHomePage(app, pages)
 
 	pages.AddPage("login", login, true, true)
 	pages.AddPage("home", home, true, false)
