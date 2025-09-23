@@ -9,7 +9,8 @@ func NewMain(app *tview.Application) *tview.Flex {
 		AddItem("Add expense", "", 'a', nil).
 		AddItem("Automatic expense entry", "", 's', nil).
 		AddItem("Add account", "", 'd', nil).
-		AddItem("Settings", "", 'f', nil).
+		AddItem("View stats", "", 'f', nil).
+		AddItem("Settings", "", 'g', nil).
 		AddItem("Quit", "", 'q', func() {
 			app.Stop()
 		})
