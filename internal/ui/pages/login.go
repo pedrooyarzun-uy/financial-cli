@@ -10,25 +10,22 @@ func NewLoginPage(app *tview.Application, pages *tview.Pages) *tview.Flex {
 	email := components.NewInput("Email: ", 30, tcell.ColorGreen, tcell.ColorBlack, false)
 	password := components.NewInput("Password: ", 30, tcell.ColorGreen, tcell.ColorBlack, true)
 
-	email.SetDoneFunc(func(key tcell.Key) {
-		if key == tcell.KeyEnter {
-			app.SetFocus(password)
+	form := tview.NewForm()
+
+	form.AddFormItem(email)
+	form.AddFormItem(password)
+
+	form.AddButton("Sign In", func() {
+		if password.GetText() == "admin" {
+			pages.SwitchToPage("home")
 		}
 	})
 
-	password.SetDoneFunc(func(key tcell.Key) {
-		if key == tcell.KeyEnter {
-			if password.GetText() == "admin" {
-				pages.SwitchToPage("home")
-			}
-		}
-	})
+	form.AddTextView("Don't have an account yet?", "", 1, 1, false, false)
 
-	box := tview.NewFlex().
+	flex := tview.NewFlex().
 		SetDirection(tview.FlexRow).
-		AddItem(tview.NewTextView().SetText("Welcome to Financial CLI!").SetTextColor(tcell.ColorGreen), 2, 0, false).
-		AddItem(email, 1, 0, true).
-		AddItem(password, 1, 0, false)
+		AddItem(form, 0, 1, true)
 
-	return box
+	return flex
 }
