@@ -1,6 +1,9 @@
 package home
 
-import "github.com/rivo/tview"
+import (
+	"github.com/gdamore/tcell/v2"
+	"github.com/rivo/tview"
+)
 
 func NewMain(app *tview.Application) *tview.Flex {
 	main := tview.NewFlex()
@@ -14,6 +17,8 @@ func NewMain(app *tview.Application) *tview.Flex {
 		AddItem("Quit", "", 'q', func() {
 			app.Stop()
 		})
+
+	list.SetShortcutColor(tcell.ColorOrange)
 
 	main.AddItem(list, 0, 1, true)
 
