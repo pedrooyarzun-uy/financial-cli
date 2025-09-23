@@ -14,6 +14,9 @@ func NewHomePage(app *tview.Application, pages *tview.Pages) *tview.Grid {
 	side := newPrimitive("Side Bar")
 
 	main := NewMain(app)
+	//Seteamos focus a main
+	app.SetFocus(main)
+
 	header := NewHeader()
 
 	grid := tview.NewGrid().
