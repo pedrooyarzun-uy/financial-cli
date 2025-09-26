@@ -26,7 +26,6 @@ func NewHeader() *tview.Flex {
 		SetTextColor(tcell.ColorRed).
 		SetTextAlign(tview.AlignRight)
 
-	// Agregamos filas al Flex principal
 	flex.AddItem(topRow, 1, 0, false)
 	flex.AddItem(bottomRow, 1, 0, false)
 
