@@ -28,8 +28,11 @@ func NewTransaction(app *tview.Application, pages *tview.Pages) *tview.Flex {
 	form.AddTextArea("Notes:", "Add your notes...", 30, 4, 30, nil)
 
 	//Back button
-	form.AddButton("Go Back", nil).
-		SetButtonBackgroundColor(tcell.ColorLightGoldenrodYellow).
+	backBtn := form.AddButton("Go Back", func() {
+		pages.SwitchToPage("home")
+	})
+
+	backBtn.SetButtonBackgroundColor(tcell.ColorLightGoldenrodYellow).
 		SetButtonTextColor(tcell.ColorBlack)
 
 	//Save form and validate
