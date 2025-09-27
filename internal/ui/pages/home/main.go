@@ -5,11 +5,14 @@ import (
 	"github.com/rivo/tview"
 )
 
-func NewMain(app *tview.Application) *tview.Flex {
+func NewMain(app *tview.Application, pages *tview.Pages) *tview.Flex {
+
 	main := tview.NewFlex()
 
 	list := tview.NewList().
-		AddItem("Add expense", "", 'a', nil).
+		AddItem("Add expense", "", 'a', func() {
+			pages.SwitchToPage("transaction")
+		}).
 		AddItem("Automatic expense entry", "", 's', nil).
 		AddItem("Add account", "", 'd', nil).
 		AddItem("View stats", "", 'f', nil).

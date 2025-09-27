@@ -1,6 +1,7 @@
 package home
 
 import (
+	"github.com/pedrooyarzun-uy/financial-cli/internal/ui/pages/home/options"
 	"github.com/rivo/tview"
 )
 
@@ -13,7 +14,9 @@ func NewHomePage(app *tview.Application, pages *tview.Pages) *tview.Grid {
 	}
 	side := newPrimitive("Side Bar")
 
-	main := NewMain(app)
+	main := NewMain(app, pages)
+	pages.AddPage("transaction", options.NewTransaction(app, pages), true, true)
+
 	//Seteamos focus a main
 	app.SetFocus(main)
 
