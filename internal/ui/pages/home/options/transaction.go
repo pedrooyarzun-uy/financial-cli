@@ -15,7 +15,7 @@ func NewTransaction(app *tview.Application, pages *tview.Pages) *tview.Flex {
 	categories := []string{
 		"Food", "Clothes",
 		"Transport", "Education",
-		"Health", "Create New one",
+		"Health", "Create New one...",
 	}
 
 	//Form
@@ -24,7 +24,12 @@ func NewTransaction(app *tview.Application, pages *tview.Pages) *tview.Flex {
 		SetFieldBackgroundColor(tcell.ColorDarkSlateGray)
 	form.AddDropDown("Type:", []string{"Income", "Expense"}, 0, nil)
 	form.AddDropDown("Currency:", []string{"UY", "USD"}, 0, nil)
-	form.AddDropDown("Category:", categories, 1, nil)
+	form.AddDropDown("Category:", categories, 0, func(option string, optionIndex int) {
+		if optionIndex == 5 {
+			categoryModal := NewCategory(pages)
+			pages.AddPage("category", categoryModal, true, true)
+		}
+	})
 	form.AddTextArea("Notes:", "Add your notes...", 30, 4, 30, nil)
 
 	//Back button
@@ -53,6 +58,7 @@ func NewTransaction(app *tview.Application, pages *tview.Pages) *tview.Flex {
 		_, category := form.GetFormItem(3).(*tview.DropDown).GetCurrentOption()
 		notes := form.GetFormItem(4).(*tview.TextArea).GetText()
 
+		//---Logic for sending to backend---
 		fmt.Println(type_, currency, category, notes, amount)
 
 	})
