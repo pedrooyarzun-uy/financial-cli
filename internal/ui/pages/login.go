@@ -1,4 +1,4 @@
-package ui
+package pages
 
 import (
 	"github.com/gdamore/tcell/v2"
@@ -25,7 +25,9 @@ func NewLoginPage(app *tview.Application, pages *tview.Pages) *tview.Flex {
 		}
 	})
 
-	form.AddButton("Sign up", nil)
+	form.AddButton("Sign up", func() {
+		pages.SwitchToPage("sign_up")
+	})
 
 	form.AddTextView("Don't have an account yet?", "", 1, 1, false, false)
 
