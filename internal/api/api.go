@@ -8,14 +8,16 @@ import (
 	"time"
 )
 
+var CLIENT *ApiClient
+
 type ApiClient struct {
 	BaseURL    string
 	HttpClient *http.Client
 	Token      string
 }
 
-func NewApiClient(baseUrl string) *ApiClient {
-	return &ApiClient{
+func Init(baseUrl string) {
+	CLIENT = &ApiClient{
 		BaseURL: baseUrl,
 		HttpClient: &http.Client{
 			Timeout: 10 * time.Second,
