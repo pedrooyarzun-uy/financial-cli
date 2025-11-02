@@ -34,10 +34,12 @@ func NewLoginPage(app *tview.Application, pages *tview.Pages) *tview.Flex {
 
 		if err != nil {
 			form.AddTextView("Error", err.Error(), 30, 1, false, false)
-		} else {
-			form.AddTextView("Response", res.Auth+" "+res.Message, 30, 1, false, false)
+			return
 		}
 
+		api.CLIENT.SetToken(res.Auth)
+
+		pages.SwitchToPage("home")
 	})
 
 	form.AddButton("Sign up", func() {
