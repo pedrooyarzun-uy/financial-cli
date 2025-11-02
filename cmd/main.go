@@ -2,12 +2,15 @@ package main
 
 import (
 	"github.com/gdamore/tcell/v2"
+	"github.com/pedrooyarzun-uy/financial-cli/internal/api"
 	p "github.com/pedrooyarzun-uy/financial-cli/internal/ui/pages"
 	"github.com/pedrooyarzun-uy/financial-cli/internal/ui/pages/home"
 	"github.com/rivo/tview"
 )
 
 func main() {
+
+	api.Init("http://localhost:8080")
 
 	app := tview.NewApplication()
 	pages := tview.NewPages()
