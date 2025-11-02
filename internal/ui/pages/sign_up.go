@@ -1,10 +1,10 @@
 package pages
 
 import (
-	"fmt"
-
 	"github.com/gdamore/tcell/v2"
+	"github.com/pedrooyarzun-uy/financial-cli/internal/api"
 	"github.com/pedrooyarzun-uy/financial-cli/internal/ui/components"
+	"github.com/pedrooyarzun-uy/financial-cli/internal/ui/models"
 	"github.com/pedrooyarzun-uy/financial-cli/internal/ui/validators"
 	"github.com/rivo/tview"
 )
@@ -44,7 +44,23 @@ func NewSignUp(pages *tview.Pages) *tview.Flex {
 			return
 		}
 
-		fmt.Println(name, email, password)
+		req := models.SignUpReq{
+			Name:     name,
+			Email:    email,
+			Password: password,
+		}
+
+		res := models.SignUpRes{}
+
+		err := api.CLIENT.PostMethod("/user/sign-up", &res, req, true)
+
+		if err != nil {
+			//Upgrade: add modal for errors
+			form.AddTextView("Error", err.Error(), 30, 1, false, false)
+		}
+
+		//Upgrade: add modal and then redirect to login
+		pages.SwitchToPage("login")
 	})
 
 	flex := tview.NewFlex()
