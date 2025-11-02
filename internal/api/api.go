@@ -53,7 +53,7 @@ func (c *ApiClient) PostMethod(endpoint string, result interface{}, payload inte
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("error %s", resp.Status)
+		return fmt.Errorf(resp.Status)
 	}
 
 	return json.NewDecoder(resp.Body).Decode(result)
