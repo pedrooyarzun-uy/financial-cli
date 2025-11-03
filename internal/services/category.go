@@ -22,11 +22,13 @@ func (s *CategoryService) GetAllForDropdown() ([]string, error) {
 		return nil, err
 	}
 
-	result := make([]string, 0, len(response.Categories))
+	result := make([]string, 0, len(response.Categories)+1)
 
 	for _, v := range response.Categories {
 		result = append(result, v.Name)
 	}
+
+	result = append(result, "Add new category...")
 
 	return result, nil
 }
