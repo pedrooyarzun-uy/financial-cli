@@ -4,6 +4,8 @@ import (
 	"fmt"
 
 	"github.com/gdamore/tcell/v2"
+	"github.com/pedrooyarzun-uy/financial-cli/internal/api"
+	"github.com/pedrooyarzun-uy/financial-cli/internal/services"
 	"github.com/pedrooyarzun-uy/financial-cli/internal/ui/components"
 	"github.com/pedrooyarzun-uy/financial-cli/internal/ui/validators"
 	"github.com/rivo/tview"
@@ -12,10 +14,18 @@ import (
 func NewTransaction(app *tview.Application, pages *tview.Pages) *tview.Flex {
 	form := tview.NewForm()
 
-	categories := []string{
-		"Food", "Clothes",
-		"Transport", "Education",
-		"Health", "Create New one...",
+	// categories := []string{
+	// 	"Food", "Clothes",
+	// 	"Transport", "Education",
+	// 	"Health", "Create New one...",
+	// }
+
+	cs := services.NewCategoryService(api.CLIENT)
+
+	err, res := cs.GetAllForDropdown()
+
+	if err != nil {
+		form.AddTextView("Error", err.Error(), 30, 1, false, false)
 	}
 
 	//Form
@@ -24,7 +34,7 @@ func NewTransaction(app *tview.Application, pages *tview.Pages) *tview.Flex {
 		SetFieldBackgroundColor(tcell.ColorDarkSlateGray)
 	form.AddDropDown("Type:", []string{"Income", "Expense"}, 0, nil)
 	form.AddDropDown("Currency:", []string{"UY", "USD"}, 0, nil)
-	form.AddDropDown("Category:", categories, 0, func(option string, optionIndex int) {
+	form.AddDropDown("Category:", res, 0, func(option string, optionIndex int) {
 		if optionIndex == 5 {
 			categoryModal := NewCategory(pages)
 			pages.AddPage("category", categoryModal, true, true)
