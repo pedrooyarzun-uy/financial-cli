@@ -9,26 +9,36 @@ type CategoryService struct {
 	apiClient *api.ApiClient
 }
 
+type DropdownOption struct {
+	Label string
+	Value int
+}
+
 func NewCategoryService(client *api.ApiClient) *CategoryService {
 	return &CategoryService{apiClient: client}
 }
 
-func (s *CategoryService) GetAllForDropdown() ([]string, error) {
+func (s *CategoryService) GetAllForDropdown() ([]DropdownOption, error) {
 	response := dto.GetAllCategoriesRes{}
 
 	err := s.apiClient.GetMethod("/category/get-all", &response)
-
 	if err != nil {
 		return nil, err
 	}
 
-	result := make([]string, 0, len(response.Categories)+1)
+	result := make([]DropdownOption, 0, len(response.Categories)+1)
 
 	for _, v := range response.Categories {
-		result = append(result, v.Name)
+		result = append(result, DropdownOption{
+			Label: v.Name,
+			Value: v.Id,
+		})
 	}
 
-	result = append(result, "Add new category...")
+	result = append(result, DropdownOption{
+		Label: "Add new category...",
+		Value: -1,
+	})
 
 	return result, nil
 }
