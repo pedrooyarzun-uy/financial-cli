@@ -1,8 +1,6 @@
 package options
 
 import (
-	"fmt"
-
 	"github.com/gdamore/tcell/v2"
 	"github.com/pedrooyarzun-uy/financial-cli/internal/api"
 	"github.com/pedrooyarzun-uy/financial-cli/internal/services"
@@ -14,16 +12,23 @@ import (
 func NewTransaction(app *tview.Application, pages *tview.Pages) *tview.Flex {
 	form := tview.NewForm()
 
-	// categories := []string{
-	// 	"Food", "Clothes",
-	// 	"Transport", "Education",
-	// 	"Health", "Create New one...",
-	// }
-
 	cs := services.NewCategoryService(api.CLIENT)
+	ts := services.NewTransactionService(api.CLIENT)
 
-	err, res := cs.GetAllForDropdown()
+	categoryOptions, err := cs.GetAllForDropdown()
+	if err != nil {
+		form.AddTextView("Error", err.Error(), 30, 1, false, false)
+	}
 
+	categoryLabels := make([]string, 0, len(categoryOptions))
+	categoryMap := make(map[string]int, len(categoryOptions))
+
+	for _, opt := range categoryOptions {
+		categoryLabels = append(categoryLabels, opt.Label)
+		categoryMap[opt.Label] = opt.Value
+	}
+
+	//TODO: add error modal with timeout and redirect to home
 	if err != nil {
 		form.AddTextView("Error", err.Error(), 30, 1, false, false)
 	}
@@ -33,13 +38,26 @@ func NewTransaction(app *tview.Application, pages *tview.Pages) *tview.Flex {
 		SetLabelColor(tcell.ColorCornflowerBlue).
 		SetFieldBackgroundColor(tcell.ColorDarkSlateGray)
 	form.AddDropDown("Type:", []string{"Income", "Expense"}, 0, nil)
+
+	typeMap := map[string]int{
+		"Income":  1,
+		"Expense": 2,
+	}
+
 	form.AddDropDown("Currency:", []string{"UY", "USD"}, 0, nil)
-	form.AddDropDown("Category:", res, 0, func(option string, optionIndex int) {
-		if optionIndex == 5 {
+
+	currencyMap := map[string]int{
+		"USD": 1,
+		"UY":  2,
+	}
+
+	form.AddDropDown("Category:", categoryLabels, 0, func(option string, optionIndex int) {
+		if categoryMap[option] == -1 {
 			categoryModal := NewCategory(pages)
 			pages.AddPage("category", categoryModal, true, true)
 		}
 	})
+
 	form.AddTextArea("Notes:", "Add your notes...", 30, 4, 30, nil)
 
 	//Back button
@@ -66,10 +84,21 @@ func NewTransaction(app *tview.Application, pages *tview.Pages) *tview.Flex {
 		_, type_ := form.GetFormItem(1).(*tview.DropDown).GetCurrentOption()
 		_, currency := form.GetFormItem(2).(*tview.DropDown).GetCurrentOption()
 		_, category := form.GetFormItem(3).(*tview.DropDown).GetCurrentOption()
+		categoryID := categoryMap[category]
+
 		notes := form.GetFormItem(4).(*tview.TextArea).GetText()
 
-		//---Logic for sending to backend---
-		fmt.Println(type_, currency, category, notes, amount)
+		//Pending, select account and subcategory in form
+		err = ts.Add(amount, 2, currencyMap[currency], typeMap[type_], categoryID, notes)
+
+		if err != nil {
+			modal := components.NewWarningModal(err.Error(), pages)
+			pages.AddPage("modal", modal, true, true)
+			return
+		}
+
+		modal := components.NewSuccessModal("Transaction saved correctly!", pages)
+		pages.AddPage("modal", modal, true, true)
 
 	})
 	saveBtn.SetButtonBackgroundColor(tcell.ColorDarkGreen).
