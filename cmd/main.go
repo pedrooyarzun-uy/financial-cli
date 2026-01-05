@@ -4,7 +4,6 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/pedrooyarzun-uy/financial-cli/internal/api"
 	p "github.com/pedrooyarzun-uy/financial-cli/internal/ui/pages"
-	"github.com/pedrooyarzun-uy/financial-cli/internal/ui/pages/home"
 	"github.com/rivo/tview"
 )
 
@@ -17,10 +16,8 @@ func main() {
 
 	login := p.NewLoginPage(app, pages)
 	signUp := p.NewSignUp(pages)
-	home := home.NewHomePage(app, pages)
 
 	pages.AddPage("login", login, true, true)
-	pages.AddPage("home", home, true, false)
 	pages.AddPage("sign_up", signUp, true, false)
 
 	app.SetBeforeDrawFunc(func(screen tcell.Screen) bool {

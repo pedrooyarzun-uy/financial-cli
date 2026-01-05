@@ -41,7 +41,7 @@ func (c *ApiClient) PostMethod(endpoint string, result interface{}, payload inte
 	req.Header.Set("Content-Type", "application/json")
 
 	if !public {
-		req.Header.Set("Authorization", "Bearer "+c.Token)
+		req.Header.Set("Authorization", c.Token)
 	}
 
 	resp, err := c.HttpClient.Do(req)
@@ -61,14 +61,14 @@ func (c *ApiClient) PostMethod(endpoint string, result interface{}, payload inte
 
 func (c *ApiClient) GetMethod(endpoint string, result interface{}) error {
 
-	req, err := http.NewRequest("GET", endpoint, nil)
+	req, err := http.NewRequest("GET", c.BaseURL+endpoint, nil)
 
 	if err != nil {
 		return err
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bearer: "+c.Token)
+	req.Header.Set("Authorization", c.Token)
 
 	resp, err := c.HttpClient.Do(req)
 

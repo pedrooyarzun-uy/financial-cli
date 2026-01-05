@@ -4,6 +4,7 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/pedrooyarzun-uy/financial-cli/internal/api"
 	"github.com/pedrooyarzun-uy/financial-cli/internal/ui/models"
+	"github.com/pedrooyarzun-uy/financial-cli/internal/ui/pages/home"
 	"github.com/rivo/tview"
 )
 
@@ -38,8 +39,9 @@ func NewLoginPage(app *tview.Application, pages *tview.Pages) *tview.Flex {
 		}
 
 		api.CLIENT.SetToken(res.Auth)
+		home := home.NewHomePage(app, pages)
 
-		pages.SwitchToPage("home")
+		pages.AddAndSwitchToPage("home", home, true)
 	})
 
 	form.AddButton("Sign up", func() {
