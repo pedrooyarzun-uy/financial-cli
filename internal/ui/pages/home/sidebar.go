@@ -27,7 +27,7 @@ func NewSidebar(app *tview.Application, pages *tview.Pages) *tview.Flex {
 
 	var b strings.Builder
 	for _, c := range categories {
-		fmt.Fprintf(&b, "[#00ffcc]%s[-]: $%.2f\n", c.Category, c.Total)
+		fmt.Fprintf(&b, "[%s]%s[-]: $%.2f\n", c.Color, c.Category, c.Total)
 	}
 
 	list.SetText(b.String())
