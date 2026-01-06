@@ -30,3 +30,15 @@ func (s *TransactionService) Add(amount float64, account int, currency int, type
 	return err
 
 }
+
+func (s *TransactionService) GetTotalsByCategory() ([]dto.TotalByCategory, error) {
+	res := dto.TotalsByCategoryRes{}
+
+	err := s.apiClient.GetMethod("/transaction/get-totals-by-category", &res)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return res.Totals, err
+}

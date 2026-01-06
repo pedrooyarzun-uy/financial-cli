@@ -12,3 +12,13 @@ type AddTransactionReq struct {
 type AddTransactionRes struct {
 	Message string `json:"message" binding:"required"`
 }
+
+type TotalByCategory struct {
+	Category string  `json:"Category"`
+	Total    float64 `json:"Total"`
+}
+
+type TotalsByCategoryRes struct {
+	Message string            `json:"message"`
+	Totals  []TotalByCategory `json:"totals"`
+}
