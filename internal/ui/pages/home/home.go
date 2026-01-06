@@ -19,7 +19,7 @@ func NewHomePage(app *tview.Application, pages *tview.Pages) *tview.Grid {
 
 	grid := tview.NewGrid().
 		SetRows(2, 2).
-		SetColumns(30, 100).
+		SetColumns(30, 0).
 		SetBorders(true)
 
 	grid.AddItem(header, 0, 0, 1, 2, 0, 0, false)
