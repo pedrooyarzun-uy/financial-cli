@@ -16,6 +16,7 @@ type AddTransactionRes struct {
 type TotalByCategory struct {
 	Category string  `json:"Category"`
 	Total    float64 `json:"Total"`
+	Color    string  `json:"Color"`
 }
 
 type TotalsByCategoryRes struct {
