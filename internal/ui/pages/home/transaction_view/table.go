@@ -4,15 +4,11 @@ import (
 	"strconv"
 
 	"github.com/gdamore/tcell/v2"
-	"github.com/pedrooyarzun-uy/financial-cli/internal/api"
-	"github.com/pedrooyarzun-uy/financial-cli/internal/services"
+	"github.com/pedrooyarzun-uy/financial-cli/internal/dto"
 	"github.com/rivo/tview"
 )
 
-func NewTransactionsTable() *tview.Table {
-
-	ts := services.NewTransactionService(api.CLIENT)
-	transactions, _ := ts.GetTransactionsByDetail("", "", 0, 0)
+func NewTransactionsTable(transactions []dto.TransactionByDetail) *tview.Table {
 
 	table := tview.NewTable().SetBorders(true)
 

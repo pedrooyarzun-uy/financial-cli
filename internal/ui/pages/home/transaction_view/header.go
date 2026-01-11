@@ -1,8 +1,17 @@
 package transactionview
 
-import "github.com/rivo/tview"
+import (
+	"github.com/pedrooyarzun-uy/financial-cli/internal/api"
+	"github.com/pedrooyarzun-uy/financial-cli/internal/dto"
+	"github.com/pedrooyarzun-uy/financial-cli/internal/services"
+	"github.com/rivo/tview"
+)
 
-func NewTransactionsHeader(pages *tview.Pages) *tview.Grid {
+func NewTransactionsHeader(pages *tview.Pages) (*tview.Grid, []dto.TransactionByDetail) {
+
+	ts := services.NewTransactionService(api.CLIENT)
+	transactions, _ := ts.GetTransactionsByDetail("", "", 0, 0)
+
 	fromInput := tview.NewInputField().
 		SetLabel("From: ").
 		SetLabelWidth(6).
@@ -42,5 +51,5 @@ func NewTransactionsHeader(pages *tview.Pages) *tview.Grid {
 	top.AddItem(subcategoryDrop, 0, 4, 1, 1, 0, 0, false)
 	top.AddItem(searchBtn, 0, 5, 1, 1, 0, 0, false)
 
-	return top
+	return top, transactions
 }
