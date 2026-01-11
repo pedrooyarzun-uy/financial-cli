@@ -1,6 +1,9 @@
 package services
 
 import (
+	"net/url"
+	"strconv"
+
 	"github.com/pedrooyarzun-uy/financial-cli/internal/api"
 	"github.com/pedrooyarzun-uy/financial-cli/internal/dto"
 )
@@ -41,4 +44,36 @@ func (s *TransactionService) GetTotalsByCategory() ([]dto.TotalByCategory, error
 	}
 
 	return res.Totals, err
+}
+
+func (s *TransactionService) GetTransactionsByDetail(from string, to string, category int, subcategory int) ([]dto.TransactionByDetail, error) {
+	res := dto.GetTransactionsByDetailRes{}
+
+	params := url.Values{}
+
+	if from != "" {
+		params.Add("from", from)
+	}
+
+	if to != "" {
+		params.Add("to", to)
+	}
+
+	if category != 0 {
+		params.Add("category", strconv.Itoa(category))
+	}
+
+	if subcategory != 0 {
+		params.Add("subcategory", strconv.Itoa(subcategory))
+	}
+
+	url := "/transaction/get-all-by-detail?" + params.Encode()
+
+	err := s.apiClient.GetMethod(url, &res)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return res.Transactions, nil
 }
