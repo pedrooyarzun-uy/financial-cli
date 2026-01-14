@@ -10,6 +10,17 @@ import (
 func NewTransactionsHeader(pages *tview.Pages) (*tview.Grid, []dto.TransactionByDetail) {
 
 	ts := services.NewTransactionService(api.CLIENT)
+	cs := services.NewCategoryService(api.CLIENT)
+
+	categories, _ := cs.GetAllForDropdown()
+	categoryLabels := make([]string, 0, len(categories))
+	categoryMap := make(map[string]int, len(categories))
+
+	for _, opt := range categories {
+		categoryLabels = append(categoryLabels, opt.Label)
+		categoryMap[opt.Label] = opt.Value
+	}
+
 	transactions, _ := ts.GetTransactionsByDetail("", "", 0, 0)
 
 	fromInput := tview.NewInputField().
@@ -26,7 +37,7 @@ func NewTransactionsHeader(pages *tview.Pages) (*tview.Grid, []dto.TransactionBy
 		SetLabel("Category: ").
 		SetLabelWidth(10).
 		SetFieldWidth(14).
-		SetOptions([]string{"Prueba"}, nil)
+		SetOptions(categoryLabels, nil)
 
 	subcategoryDrop := tview.NewDropDown().
 		SetLabel("Subcategory: ").
