@@ -11,6 +11,7 @@ func NewTransactionsHeader(pages *tview.Pages) (*tview.Grid, []dto.TransactionBy
 
 	ts := services.NewTransactionService(api.CLIENT)
 	cs := services.NewCategoryService(api.CLIENT)
+	ss := services.NewSubcategoryService(api.CLIENT)
 
 	categories, _ := cs.GetAllForDropdown()
 	categoryLabels := make([]string, 0, len(categories))
@@ -33,17 +34,47 @@ func NewTransactionsHeader(pages *tview.Pages) (*tview.Grid, []dto.TransactionBy
 		SetLabelWidth(4).
 		SetFieldWidth(10)
 
-	categoryDrop := tview.NewDropDown().
-		SetLabel("Category: ").
-		SetLabelWidth(10).
-		SetFieldWidth(14).
-		SetOptions(categoryLabels, nil)
+	subcategoriesMap := make(map[string]int)
 
 	subcategoryDrop := tview.NewDropDown().
 		SetLabel("Subcategory: ").
 		SetLabelWidth(13).
 		SetFieldWidth(14).
-		SetOptions([]string{"Prueba"}, nil)
+		SetOptions([]string{"Select category..."}, nil)
+
+	categoryDrop := tview.NewDropDown().
+		SetLabel("Category: ").
+		SetLabelWidth(10).
+		SetFieldWidth(14).
+		SetOptions(categoryLabels, func(text string, index int) {
+			selctedCategory := categoryMap[text]
+
+			subs, err := ss.GetAllForDropdown(selctedCategory)
+
+			if err != nil {
+				subcategoriesMap = make(map[string]int)
+				subcategoryDrop.SetOptions([]string{"(error loading)"}, nil)
+				subcategoryDrop.SetCurrentOption(0)
+				return
+			}
+
+			labels := make([]string, 0, len(subs))
+			subcategoriesMap = make(map[string]int, len(subs))
+
+			for _, opt := range subs {
+				labels = append(labels, opt.Label)
+				subcategoriesMap[opt.Label] = opt.Value
+			}
+
+			if len(labels) == 0 {
+				labels = []string{"(no subcategories)"}
+				subcategoriesMap = make(map[string]int)
+			}
+
+			subcategoryDrop.SetOptions(labels, nil)
+			subcategoryDrop.SetCurrentOption(0)
+
+		})
 
 	backBtn := tview.NewButton("⬅ Back").
 		SetSelectedFunc(func() { pages.SwitchToPage("home") })
