@@ -2,6 +2,7 @@ package transactionview
 
 import (
 	"strconv"
+	"strings"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/pedrooyarzun-uy/financial-cli/internal/dto"
@@ -20,8 +21,13 @@ func NewTransactionsTable(transactions []dto.TransactionByDetail) *tview.Table {
 	table.SetCell(0, 5, tview.NewTableCell("Date").SetSelectable(false).SetAttributes(tcell.AttrBold).SetTextColor(tcell.ColorYellow).SetAlign(tview.AlignCenter))
 
 	for idx, val := range transactions {
+
+		//Parsing color for tcell
+		val.Color = strings.TrimPrefix(val.Color, "#")
+		v, _ := strconv.ParseInt(val.Color, 16, 32)
+
 		idx += 1
-		table.SetCell(idx, 0, tview.NewTableCell(val.Category))
+		table.SetCell(idx, 0, tview.NewTableCell(val.Category).SetTextColor(tcell.NewHexColor(int32(v))))
 		table.SetCell(idx, 1, tview.NewTableCell(val.Subcategory))
 		table.SetCell(idx, 2, tview.NewTableCell(strconv.FormatFloat(val.Amount, 'f', 2, 64)))
 		table.SetCell(idx, 3, tview.NewTableCell(val.Currency))
