@@ -2,16 +2,18 @@ package transactionview
 
 import (
 	"github.com/pedrooyarzun-uy/financial-cli/internal/api"
-	"github.com/pedrooyarzun-uy/financial-cli/internal/dto"
 	"github.com/pedrooyarzun-uy/financial-cli/internal/services"
 	"github.com/rivo/tview"
 )
 
-func NewTransactionsHeader(pages *tview.Pages) (*tview.Grid, []dto.TransactionByDetail) {
+func NewTransactionsHeader(pages *tview.Pages) (*tview.Grid, *tview.Table) {
 
 	ts := services.NewTransactionService(api.CLIENT)
 	cs := services.NewCategoryService(api.CLIENT)
 	ss := services.NewSubcategoryService(api.CLIENT)
+
+	table := tview.NewTable().SetBorders(true)
+	SetHeaders(table)
 
 	categories, _ := cs.GetAllForDropdown()
 	categoryLabels := make([]string, 0, len(categories))
@@ -23,6 +25,7 @@ func NewTransactionsHeader(pages *tview.Pages) (*tview.Grid, []dto.TransactionBy
 	}
 
 	transactions, _ := ts.GetTransactionsByDetail("", "", 0, 0)
+	LoadData(table, transactions)
 
 	fromInput := tview.NewInputField().
 		SetLabel("From: ").
@@ -79,7 +82,22 @@ func NewTransactionsHeader(pages *tview.Pages) (*tview.Grid, []dto.TransactionBy
 	backBtn := tview.NewButton("⬅ Back").
 		SetSelectedFunc(func() { pages.SwitchToPage("home") })
 
-	searchBtn := tview.NewButton("Search 🔎")
+	searchBtn := tview.NewButton("Search 🔎").SetSelectedFunc(func() {
+		categoryDrop.GetCurrentOption()
+		_, categoryText := categoryDrop.GetCurrentOption()
+		_, subcategoryText := subcategoryDrop.GetCurrentOption()
+
+		categoryID := categoryMap[categoryText]
+		subcategoryID := subcategoriesMap[subcategoryText]
+
+		from := fromInput.GetText()
+		to := toInput.GetText()
+
+		transactions, _ := ts.GetTransactionsByDetail(from, to, categoryID, subcategoryID)
+		RefreshTable(table)
+		SetHeaders(table)
+		LoadData(table, transactions)
+	})
 
 	top := tview.NewGrid().
 		SetRows(2).
@@ -93,5 +111,5 @@ func NewTransactionsHeader(pages *tview.Pages) (*tview.Grid, []dto.TransactionBy
 	top.AddItem(subcategoryDrop, 0, 4, 1, 1, 0, 0, false)
 	top.AddItem(searchBtn, 0, 5, 1, 1, 0, 0, false)
 
-	return top, transactions
+	return top, table
 }

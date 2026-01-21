@@ -9,9 +9,7 @@ import (
 	"github.com/rivo/tview"
 )
 
-func NewTransactionsTable(transactions []dto.TransactionByDetail) *tview.Table {
-
-	table := tview.NewTable().SetBorders(true)
+func SetHeaders(table *tview.Table) {
 
 	table.SetCell(0, 0, tview.NewTableCell("Category").SetSelectable(false).SetAttributes(tcell.AttrBold).SetTextColor(tcell.ColorYellow).SetAlign(tview.AlignCenter))
 	table.SetCell(0, 1, tview.NewTableCell("Subcategory").SetSelectable(false).SetAttributes(tcell.AttrBold).SetTextColor(tcell.ColorYellow).SetAlign(tview.AlignCenter))
@@ -19,7 +17,14 @@ func NewTransactionsTable(transactions []dto.TransactionByDetail) *tview.Table {
 	table.SetCell(0, 3, tview.NewTableCell("Currency").SetSelectable(false).SetAttributes(tcell.AttrBold).SetTextColor(tcell.ColorYellow).SetAlign(tview.AlignCenter))
 	table.SetCell(0, 4, tview.NewTableCell("Notes").SetSelectable(false).SetAttributes(tcell.AttrBold).SetTextColor(tcell.ColorYellow).SetAlign(tview.AlignCenter))
 	table.SetCell(0, 5, tview.NewTableCell("Date").SetSelectable(false).SetAttributes(tcell.AttrBold).SetTextColor(tcell.ColorYellow).SetAlign(tview.AlignCenter))
+}
 
+func RefreshTable(table *tview.Table) {
+	//Clean table
+	table.Clear()
+}
+
+func LoadData(table *tview.Table, transactions []dto.TransactionByDetail) {
 	for idx, val := range transactions {
 		//Parsing color for tcell
 		val.Color = strings.TrimPrefix(val.Color, "#")
@@ -37,8 +42,6 @@ func NewTransactionsTable(transactions []dto.TransactionByDetail) *tview.Table {
 
 		table.SetCell(idx, 3, tview.NewTableCell(val.Currency))
 		table.SetCell(idx, 4, tview.NewTableCell(val.Notes))
-		table.SetCell(idx, 5, tview.NewTableCell(val.Date.String()))
+		table.SetCell(idx, 5, tview.NewTableCell(val.Date.Format("2006-01-02 15:04:05")))
 	}
-
-	return table
 }
