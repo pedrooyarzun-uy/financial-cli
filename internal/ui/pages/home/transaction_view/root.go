@@ -8,7 +8,7 @@ func NewTransactionsView(app *tview.Application, pages *tview.Pages) *tview.Flex
 
 	root := tview.NewFlex().SetDirection(tview.FlexRow)
 	root.SetBorder(true).SetTitle("View transactions")
-	root.AddItem(header, 1, 0, true)
+	root.AddItem(header, 3, 0, true)
 	root.AddItem(table, 0, 1, false)
 
 	return root

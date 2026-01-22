@@ -46,7 +46,7 @@ func (s *TransactionService) GetTotalsByCategory() ([]dto.TotalByCategory, error
 	return res.Totals, err
 }
 
-func (s *TransactionService) GetTransactionsByDetail(from string, to string, category int, subcategory int) ([]dto.TransactionByDetail, error) {
+func (s *TransactionService) GetTransactionsByDetail(from string, to string, category int, subcategory int, page int, limit int) ([]dto.TransactionByDetail, int, error) {
 	res := dto.GetTransactionsByDetailRes{}
 
 	params := url.Values{}
@@ -67,13 +67,16 @@ func (s *TransactionService) GetTransactionsByDetail(from string, to string, cat
 		params.Add("subcategory", strconv.Itoa(subcategory))
 	}
 
+	params.Add("page", strconv.Itoa(page))
+	params.Add("limit", strconv.Itoa(limit))
+
 	url := "/transaction/get-all-by-detail?" + params.Encode()
 
 	err := s.apiClient.GetMethod(url, &res)
 
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
-	return res.Transactions, nil
+	return res.Transactions, res.TotalPages, nil
 }
