@@ -41,4 +41,5 @@ type TransactionByDetail struct {
 type GetTransactionsByDetailRes struct {
 	Message      string                `json:"message"`
 	Transactions []TransactionByDetail `json:"transactions"`
+	TotalPages   int                   `json:"total_pages"`
 }
