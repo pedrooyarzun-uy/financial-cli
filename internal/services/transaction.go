@@ -59,11 +59,11 @@ func (s *TransactionService) GetTransactionsByDetail(from string, to string, cat
 		params.Add("to", to)
 	}
 
-	if category != 0 {
+	if category > 0 {
 		params.Add("category", strconv.Itoa(category))
 	}
 
-	if subcategory != 0 {
+	if subcategory > 0 {
 		params.Add("subcategory", strconv.Itoa(subcategory))
 	}
 
