@@ -15,7 +15,7 @@ func NewTransaction(app *tview.Application, pages *tview.Pages) *tview.Flex {
 	cs := services.NewCategoryService(api.CLIENT)
 	ts := services.NewTransactionService(api.CLIENT)
 
-	categoryOptions, err := cs.GetAllForDropdown()
+	categoryOptions, err := cs.GetAllForDropdown("Add new category...", false)
 	if err != nil {
 		form.AddTextView("Error", err.Error(), 30, 1, false, false)
 	}

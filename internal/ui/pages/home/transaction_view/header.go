@@ -35,7 +35,7 @@ func NewTransactionsHeader(pages *tview.Pages) (*tview.Grid, *tview.Table) {
 
 	subcategoryDrop := components.NewDropDown("Subcategory: ", 13, 14, []string{"Select category..."}, nil)
 
-	categories, _ := cs.GetAllForDropdown()
+	categories, _ := cs.GetAllForDropdown("Select category...", true)
 	categoryLabels := make([]string, 0, len(categories))
 	categoryMap := make(map[string]int, len(categories))
 
@@ -47,7 +47,7 @@ func NewTransactionsHeader(pages *tview.Pages) (*tview.Grid, *tview.Table) {
 	categoryDrop := components.NewDropDown("Category: ", 10, 14, categoryLabels, func(text string, index int) {
 		selctedCategory := categoryMap[text]
 
-		subs, err := ss.GetAllForDropdown(selctedCategory)
+		subs, err := ss.GetAllForDropdown(selctedCategory, "Select subcategory...", true)
 
 		if err != nil {
 			subcategoriesMap = make(map[string]int)
@@ -73,10 +73,20 @@ func NewTransactionsHeader(pages *tview.Pages) (*tview.Grid, *tview.Table) {
 		subcategoryDrop.SetCurrentOption(0)
 	})
 
-	backBtn := tview.NewButton("<< Back").
-		SetSelectedFunc(func() { pages.SwitchToPage("home") })
+	categoryDrop.SetBlurFunc(func() {
+		idx, _ := categoryDrop.GetCurrentOption()
 
-	searchBtn := tview.NewButton("Search").SetSelectedFunc(func() {
+		if idx < 0 {
+			subcategoryDrop.SetOptions(nil, nil)
+			subcategoryDrop.SetCurrentOption(-1)
+		}
+	})
+
+	backBtn := components.NewButton("<< Back", func() {
+		pages.SwitchToPage("home")
+	})
+
+	searchBtn := components.NewButton("Search", func() {
 		categoryDrop.GetCurrentOption()
 		_, categoryText := categoryDrop.GetCurrentOption()
 		_, subcategoryText := subcategoryDrop.GetCurrentOption()
@@ -93,48 +103,46 @@ func NewTransactionsHeader(pages *tview.Pages) (*tview.Grid, *tview.Table) {
 		LoadData(table, transactions)
 	})
 
-	nextBtn := tview.NewButton("Next page >>").
-		SetSelectedFunc(func() {
-			if currentPage < maxPage {
-				currentPage += 1
-			}
+	nextBtn := components.NewButton("Next page >>", func() {
+		if currentPage < maxPage {
+			currentPage += 1
+		}
 
-			categoryDrop.GetCurrentOption()
-			_, categoryText := categoryDrop.GetCurrentOption()
-			_, subcategoryText := subcategoryDrop.GetCurrentOption()
+		categoryDrop.GetCurrentOption()
+		_, categoryText := categoryDrop.GetCurrentOption()
+		_, subcategoryText := subcategoryDrop.GetCurrentOption()
 
-			categoryID := categoryMap[categoryText]
-			subcategoryID := subcategoriesMap[subcategoryText]
+		categoryID := categoryMap[categoryText]
+		subcategoryID := subcategoriesMap[subcategoryText]
 
-			from := fromInput.GetText()
-			to := toInput.GetText()
+		from := fromInput.GetText()
+		to := toInput.GetText()
 
-			transactions, _, _ := ts.GetTransactionsByDetail(from, to, categoryID, subcategoryID, currentPage, 10)
-			RefreshTable(table)
-			SetHeaders(table)
-			LoadData(table, transactions)
-		})
+		transactions, _, _ := ts.GetTransactionsByDetail(from, to, categoryID, subcategoryID, currentPage, 10)
+		RefreshTable(table)
+		SetHeaders(table)
+		LoadData(table, transactions)
+	})
 
-	prevBtn := tview.NewButton("<< Previous page").
-		SetSelectedFunc(func() {
-			if currentPage > 1 {
-				currentPage -= 1
-			}
-			categoryDrop.GetCurrentOption()
-			_, categoryText := categoryDrop.GetCurrentOption()
-			_, subcategoryText := subcategoryDrop.GetCurrentOption()
+	prevBtn := components.NewButton("<< Previous page", func() {
+		if currentPage > 1 {
+			currentPage -= 1
+		}
+		categoryDrop.GetCurrentOption()
+		_, categoryText := categoryDrop.GetCurrentOption()
+		_, subcategoryText := subcategoryDrop.GetCurrentOption()
 
-			categoryID := categoryMap[categoryText]
-			subcategoryID := subcategoriesMap[subcategoryText]
+		categoryID := categoryMap[categoryText]
+		subcategoryID := subcategoriesMap[subcategoryText]
 
-			from := fromInput.GetText()
-			to := toInput.GetText()
+		from := fromInput.GetText()
+		to := toInput.GetText()
 
-			transactions, _, _ := ts.GetTransactionsByDetail(from, to, categoryID, subcategoryID, currentPage, 10)
-			RefreshTable(table)
-			SetHeaders(table)
-			LoadData(table, transactions)
-		})
+		transactions, _, _ := ts.GetTransactionsByDetail(from, to, categoryID, subcategoryID, currentPage, 10)
+		RefreshTable(table)
+		SetHeaders(table)
+		LoadData(table, transactions)
+	})
 
 	top := tview.NewGrid().
 		SetRows(1, 1).
