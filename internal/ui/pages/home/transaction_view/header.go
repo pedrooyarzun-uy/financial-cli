@@ -21,15 +21,9 @@ func NewTransactionsHeader(pages *tview.Pages) (*tview.Grid, *tview.Table) {
 	transactions, maxPage, _ := ts.GetTransactionsByDetail("", "", 0, 0, currentPage, 10)
 	LoadData(table, transactions)
 
-	fromInput := tview.NewInputField().
-		SetLabel("From: ").
-		SetLabelWidth(6).
-		SetFieldWidth(10)
+	fromInput := components.NewInputField("From: ", 6, 10)
 
-	toInput := tview.NewInputField().
-		SetLabel("To: ").
-		SetLabelWidth(4).
-		SetFieldWidth(10)
+	toInput := components.NewInputField("To: ", 4, 10)
 
 	subcategoriesMap := make(map[string]int)
 
