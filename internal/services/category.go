@@ -18,7 +18,7 @@ func NewCategoryService(client *api.ApiClient) *CategoryService {
 	return &CategoryService{apiClient: client}
 }
 
-func (s *CategoryService) GetAllForDropdown() ([]DropdownOption, error) {
+func (s *CategoryService) GetAllForDropdown(label string, first bool) ([]DropdownOption, error) {
 	response := dto.GetAllCategoriesRes{}
 
 	err := s.apiClient.GetMethod("/category/get-all", &response)
@@ -28,6 +28,13 @@ func (s *CategoryService) GetAllForDropdown() ([]DropdownOption, error) {
 
 	result := make([]DropdownOption, 0, len(response.Categories)+1)
 
+	if first {
+		result = append(result, DropdownOption{
+			Label: label,
+			Value: -1,
+		})
+	}
+
 	for _, v := range response.Categories {
 		result = append(result, DropdownOption{
 			Label: v.Name,
@@ -35,10 +42,12 @@ func (s *CategoryService) GetAllForDropdown() ([]DropdownOption, error) {
 		})
 	}
 
-	result = append(result, DropdownOption{
-		Label: "Add new category...",
-		Value: -1,
-	})
+	if !first {
+		result = append(result, DropdownOption{
+			Label: label,
+			Value: -1,
+		})
+	}
 
 	return result, nil
 }

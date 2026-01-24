@@ -15,7 +15,7 @@ func NewSubcategoryService(client *api.ApiClient) *SubcategoryService {
 	return &SubcategoryService{apiClient: client}
 }
 
-func (s *SubcategoryService) GetAllForDropdown(id int) ([]dto.DropdownOption, error) {
+func (s *SubcategoryService) GetAllForDropdown(id int, label string, first bool) ([]dto.DropdownOption, error) {
 	response := dto.GetAllSubcategoriesRes{}
 
 	url := "/subcategory/get-by-category?id=" + strconv.Itoa(id)
@@ -27,6 +27,13 @@ func (s *SubcategoryService) GetAllForDropdown(id int) ([]dto.DropdownOption, er
 
 	result := make([]dto.DropdownOption, 0, len(response.Subcategories)+1)
 
+	if first {
+		result = append(result, dto.DropdownOption{
+			Label: label,
+			Value: -1,
+		})
+	}
+
 	for _, v := range response.Subcategories {
 		result = append(result, dto.DropdownOption{
 			Label: v.Name,
@@ -34,10 +41,12 @@ func (s *SubcategoryService) GetAllForDropdown(id int) ([]dto.DropdownOption, er
 		})
 	}
 
-	result = append(result, dto.DropdownOption{
-		Label: "Add new subcategory...",
-		Value: -1,
-	})
+	if !first {
+		result = append(result, dto.DropdownOption{
+			Label: label,
+			Value: -1,
+		})
+	}
 
 	return result, nil
 }
