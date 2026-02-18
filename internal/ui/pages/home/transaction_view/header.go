@@ -21,7 +21,7 @@ func NewTransactionsHeader(pages *tview.Pages) (*tview.Grid, *tview.Table, *tvxw
 	SetHeaders(table)
 
 	transactions, maxPage, _ := ts.GetTransactionsByDetail("", "", 0, 0, currentPage, 10)
-	chartData, _ := ts.GetTotalsByCategory()
+	chartData, _ := ts.GetTotalsByCategory("", "", 0)
 
 	LoadData(table, transactions)
 

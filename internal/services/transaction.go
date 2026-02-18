@@ -34,10 +34,26 @@ func (s *TransactionService) Add(amount float64, account int, currency int, type
 
 }
 
-func (s *TransactionService) GetTotalsByCategory() ([]dto.TotalByCategory, error) {
+func (s *TransactionService) GetTotalsByCategory(from string, to string, category int) ([]dto.TotalByCategory, error) {
 	res := dto.TotalsByCategoryRes{}
 
-	err := s.apiClient.GetMethod("/transaction/get-totals-by-category", &res)
+	params := url.Values{}
+
+	if from != "" {
+		params.Add("from", from)
+	}
+
+	if to != "" {
+		params.Add("to", to)
+	}
+
+	if category > 0 {
+		params.Add("category", strconv.Itoa(category))
+	}
+
+	url := "/transaction/get-totals-by-category?" + params.Encode()
+
+	err := s.apiClient.GetMethod(url, &res)
 
 	if err != nil {
 		return nil, err
