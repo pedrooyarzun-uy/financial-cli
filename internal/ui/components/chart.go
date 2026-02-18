@@ -9,10 +9,8 @@ import (
 	"github.com/navidys/tvxwidgets"
 )
 
-func NewChart(title string) *tvxwidgets.BarChart {
+func NewChart() *tvxwidgets.BarChart {
 	chart := tvxwidgets.NewBarChart()
-	chart.SetTitle(title)
-	chart.SetBorder(true)
 
 	return chart
 }
