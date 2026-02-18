@@ -1,13 +1,14 @@
 package transactionview
 
 import (
+	"github.com/navidys/tvxwidgets"
 	"github.com/pedrooyarzun-uy/financial-cli/internal/api"
 	"github.com/pedrooyarzun-uy/financial-cli/internal/services"
 	"github.com/pedrooyarzun-uy/financial-cli/internal/ui/components"
 	"github.com/rivo/tview"
 )
 
-func NewTransactionsHeader(pages *tview.Pages) (*tview.Grid, *tview.Table) {
+func NewTransactionsHeader(pages *tview.Pages) (*tview.Grid, *tview.Table, *tvxwidgets.BarChart) {
 
 	currentPage := 1
 
@@ -16,10 +17,17 @@ func NewTransactionsHeader(pages *tview.Pages) (*tview.Grid, *tview.Table) {
 	ss := services.NewSubcategoryService(api.CLIENT)
 
 	table := tview.NewTable().SetBorders(true)
+	chart := components.NewChart()
 	SetHeaders(table)
 
 	transactions, maxPage, _ := ts.GetTransactionsByDetail("", "", 0, 0, currentPage, 10)
+	chartData, _ := ts.GetTotalsByCategory()
+
 	LoadData(table, transactions)
+
+	for _, item := range chartData {
+		components.AddItem(chart, item.Category, int(item.Total), item.Color)
+	}
 
 	fromInput := components.NewInputField("From: ", 6, 10)
 
@@ -155,5 +163,5 @@ func NewTransactionsHeader(pages *tview.Pages) (*tview.Grid, *tview.Table) {
 	top.AddItem(prevBtn, 1, 0, 1, 3, 0, 0, false)
 	top.AddItem(nextBtn, 1, 3, 1, 3, 0, 0, false)
 
-	return top, table
+	return top, table, chart
 }
