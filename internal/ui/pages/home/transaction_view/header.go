@@ -18,6 +18,7 @@ func NewTransactionsHeader(pages *tview.Pages) (*tview.Grid, *tview.Table, *tvxw
 
 	table := tview.NewTable().SetBorders(true)
 	chart := components.NewChart()
+	chartLabels := make([]string, 0) // labels actuales en el chart
 	SetHeaders(table)
 
 	transactions, maxPage, _ := ts.GetTransactionsByDetail("", "", 0, 0, currentPage, 10)
@@ -27,6 +28,7 @@ func NewTransactionsHeader(pages *tview.Pages) (*tview.Grid, *tview.Table, *tvxw
 
 	for _, item := range chartData {
 		components.AddItem(chart, item.Category, int(item.Total), item.Color)
+		chartLabels = append(chartLabels, item.Category)
 	}
 
 	fromInput := components.NewInputField("From: ", 6, 10)
@@ -100,6 +102,17 @@ func NewTransactionsHeader(pages *tview.Pages) (*tview.Grid, *tview.Table, *tvxw
 		to := toInput.GetText()
 
 		transactions, _, _ := ts.GetTransactionsByDetail(from, to, categoryID, subcategoryID, currentPage, 10)
+
+		chartData, _ := ts.GetTotalsByCategory(from, to, categoryID)
+
+		components.ResetChart(chartLabels, chart)
+		chartLabels = make([]string, 0)
+
+		for _, item := range chartData {
+			components.AddItem(chart, item.Category, int(item.Total), item.Color)
+			chartLabels = append(chartLabels, item.Category)
+		}
+
 		RefreshTable(table)
 		SetHeaders(table)
 		LoadData(table, transactions)
