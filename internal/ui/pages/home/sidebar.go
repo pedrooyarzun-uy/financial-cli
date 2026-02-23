@@ -16,7 +16,7 @@ func NewSidebar(app *tview.Application, pages *tview.Pages) *tview.Flex {
 
 	ts := services.NewTransactionService(api.CLIENT)
 	sidebar := tview.NewFlex().SetDirection(tview.FlexRow)
-	categories, err := ts.GetTotalsByCategory()
+	categories, err := ts.GetTotalsByCategory("", "", 0)
 
 	//Graphic items
 	list := tview.NewTextView().SetDynamicColors(true)
