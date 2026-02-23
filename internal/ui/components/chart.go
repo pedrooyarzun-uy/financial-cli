@@ -18,7 +18,7 @@ func NewChart() *tvxwidgets.BarChart {
 func AddItem(chart *tvxwidgets.BarChart, label string, value int, color string) {
 	var b strings.Builder
 	fmt.Fprintf(&b, "[%s]%s[-]: $%d\n", parseHexColor(color), label, value)
-	chart.AddBar(label[:7], value, parseHexColor(color))
+	chart.AddBar(label, value, parseHexColor(color))
 }
 
 func parseHexColor(hex string) tcell.Color {
@@ -26,4 +26,10 @@ func parseHexColor(hex string) tcell.Color {
 	v, _ := strconv.ParseInt(color, 16, 32)
 
 	return tcell.NewHexColor(int32(v))
+}
+
+func ResetChart(labels []string, chart *tvxwidgets.BarChart) {
+	for _, v := range labels {
+		chart.RemoveBar(v)
+	}
 }
