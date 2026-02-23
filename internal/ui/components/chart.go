@@ -29,6 +29,8 @@ func parseHexColor(hex string) tcell.Color {
 }
 
 func ResetChart(labels []string, chart *tvxwidgets.BarChart) {
+	chart.SetMaxValue(0)
+
 	for _, v := range labels {
 		chart.RemoveBar(v)
 	}
