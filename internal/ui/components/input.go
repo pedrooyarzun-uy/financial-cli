@@ -5,8 +5,12 @@ import (
 	"github.com/rivo/tview"
 )
 
-func NewInputField(label string, labelWidth int, fieldWidth int) *tview.InputField {
-	input := tview.NewInputField().
+type InputField struct {
+	*tview.InputField
+}
+
+func NewInputField(label string, labelWidth int, fieldWidth int) *InputField {
+	i := tview.NewInputField().
 		SetLabel(label).
 		SetLabelWidth(labelWidth).
 		SetFieldWidth(fieldWidth).
@@ -14,5 +18,15 @@ func NewInputField(label string, labelWidth int, fieldWidth int) *tview.InputFie
 		SetFieldTextColor(tcell.ColorWhite).
 		SetLabelColor(tcell.ColorWhite)
 
+	input := &InputField{
+		InputField: i,
+	}
+
 	return input
+}
+
+func (i *InputField) ApplyStyles() {
+	i.SetFieldBackgroundColor(tcell.ColorGray).
+		SetFieldTextColor(tcell.ColorWhite).
+		SetLabelColor(tcell.ColorWhite)
 }
