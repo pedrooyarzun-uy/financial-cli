@@ -24,9 +24,3 @@ func NewInputField(label string, labelWidth int, fieldWidth int) *InputField {
 
 	return input
 }
-
-func (i *InputField) ApplyStyles() {
-	i.SetFieldBackgroundColor(tcell.ColorGray).
-		SetFieldTextColor(tcell.ColorWhite).
-		SetLabelColor(tcell.ColorWhite)
-}
