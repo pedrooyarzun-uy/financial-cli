@@ -1,14 +1,13 @@
 package transactionview
 
 import (
-	"github.com/navidys/tvxwidgets"
 	"github.com/pedrooyarzun-uy/financial-cli/internal/api"
 	"github.com/pedrooyarzun-uy/financial-cli/internal/services"
 	"github.com/pedrooyarzun-uy/financial-cli/internal/ui/components"
 	"github.com/rivo/tview"
 )
 
-func NewTransactionsHeader(pages *tview.Pages) (*tview.Grid, *tview.Table, *tvxwidgets.BarChart) {
+func NewTransactionsHeader(pages *tview.Pages) (*tview.Grid, *tview.Table, *components.Chart) {
 
 	currentPage := 1
 
@@ -18,7 +17,6 @@ func NewTransactionsHeader(pages *tview.Pages) (*tview.Grid, *tview.Table, *tvxw
 
 	table := tview.NewTable().SetBorders(true)
 	chart := components.NewChart()
-	chartLabels := make([]string, 0) // labels actuales en el chart
 	SetHeaders(table)
 
 	transactions, maxPage, _ := ts.GetTransactionsByDetail("", "", 0, 0, currentPage, 10)
@@ -27,8 +25,7 @@ func NewTransactionsHeader(pages *tview.Pages) (*tview.Grid, *tview.Table, *tvxw
 	LoadData(table, transactions)
 
 	for _, item := range chartData {
-		components.AddItem(chart, item.Category, int(item.Total), item.Color)
-		chartLabels = append(chartLabels, item.Category)
+		chart.Add(item.Category, int(item.Total), item.Color)
 	}
 
 	fromInput := components.NewInputField("From: ", 6, 10)
@@ -105,12 +102,10 @@ func NewTransactionsHeader(pages *tview.Pages) (*tview.Grid, *tview.Table, *tvxw
 
 		chartData, _ := ts.GetTotalsByCategory(from, to, categoryID)
 
-		components.ResetChart(chartLabels, chart)
-		chartLabels = make([]string, 0)
+		chart.Reset()
 
 		for _, item := range chartData {
-			components.AddItem(chart, item.Category, int(item.Total), item.Color)
-			chartLabels = append(chartLabels, item.Category)
+			chart.Add(item.Category, int(item.Total), item.Color)
 		}
 
 		RefreshTable(table)
