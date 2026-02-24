@@ -9,16 +9,35 @@ import (
 	"github.com/navidys/tvxwidgets"
 )
 
-func NewChart() *tvxwidgets.BarChart {
-	chart := tvxwidgets.NewBarChart()
+type Chart struct {
+	*tvxwidgets.BarChart
+	labels []string
+}
+
+func NewChart() *Chart {
+	bc := tvxwidgets.NewBarChart()
+	chart := &Chart{
+		BarChart: bc,
+		labels:   []string{},
+	}
 
 	return chart
 }
 
-func AddItem(chart *tvxwidgets.BarChart, label string, value int, color string) {
+func (c *Chart) Add(label string, value int, color string) {
 	var b strings.Builder
 	fmt.Fprintf(&b, "[%s]%s[-]: $%d\n", parseHexColor(color), label, value)
-	chart.AddBar(label, value, parseHexColor(color))
+	c.BarChart.AddBar(label, value, parseHexColor(color))
+	c.labels = append(c.labels, label)
+}
+
+func (c *Chart) Reset() {
+	c.BarChart.SetMaxValue(0)
+
+	for _, v := range c.labels {
+		c.BarChart.RemoveBar(v)
+	}
+	c.labels = []string{}
 }
 
 func parseHexColor(hex string) tcell.Color {
@@ -26,12 +45,4 @@ func parseHexColor(hex string) tcell.Color {
 	v, _ := strconv.ParseInt(color, 16, 32)
 
 	return tcell.NewHexColor(int32(v))
-}
-
-func ResetChart(labels []string, chart *tvxwidgets.BarChart) {
-	chart.SetMaxValue(0)
-
-	for _, v := range labels {
-		chart.RemoveBar(v)
-	}
 }
