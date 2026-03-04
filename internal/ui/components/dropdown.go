@@ -5,8 +5,12 @@ import (
 	"github.com/rivo/tview"
 )
 
-func NewDropDown(label string, labelWidth int, fieldWidth int, options []string, selectedFunc func(text string, index int)) *tview.DropDown {
-	dropdown := tview.NewDropDown().
+type DropDown struct {
+	*tview.DropDown
+}
+
+func NewDropDown(label string, labelWidth int, fieldWidth int, options []string, selectedFunc func(text string, index int)) *DropDown {
+	d := tview.NewDropDown().
 		SetLabel(label).
 		SetLabelWidth(labelWidth).
 		SetFieldWidth(fieldWidth).
@@ -20,6 +24,10 @@ func NewDropDown(label string, labelWidth int, fieldWidth int, options []string,
 		).
 		SetPrefixStyle(tcell.StyleDefault.Foreground(tcell.ColorGray).Foreground(tcell.ColorWhite)).
 		SetFocusedStyle(tcell.StyleDefault.Background(tcell.ColorWhite).Foreground(tcell.ColorBlack))
+
+	dropdown := &DropDown{
+		DropDown: d,
+	}
 
 	return dropdown
 }
