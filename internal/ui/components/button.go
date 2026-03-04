@@ -5,10 +5,18 @@ import (
 	"github.com/rivo/tview"
 )
 
-func NewButton(label string, selectedFunc func()) *tview.Button {
+type Button struct {
+	*tview.Button
+}
+
+func NewButton(label string, selectedFunc func()) *Button {
 	button := tview.NewButton(label).
 		SetStyle(tcell.StyleDefault.Foreground(tcell.ColorWhite).Background(tcell.ColorGray)).
 		SetSelectedFunc(selectedFunc)
 
-	return button
+	btn := &Button{
+		Button: button,
+	}
+
+	return btn
 }
