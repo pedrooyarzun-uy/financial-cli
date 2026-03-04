@@ -33,10 +33,11 @@ func NewTransaction(app *tview.Application, pages *tview.Pages) *tview.Flex {
 		form.AddTextView("Error", err.Error(), 30, 1, false, false)
 	}
 
-	//Form
+	//Amount dropdown
 	amount := components.NewInputField("Amount:", 10, 17)
 	form.AddFormItem(amount)
 
+	//Type dropdown
 	type_ := components.NewDropDown("Type:", 10, 30, []string{"Income", "Outcome"}, nil)
 	form.AddFormItem(type_)
 
@@ -54,6 +55,7 @@ func NewTransaction(app *tview.Application, pages *tview.Pages) *tview.Flex {
 		"UY":  2,
 	}
 
+	//Category dropdown
 	category := components.NewDropDown("Category: ", 10, 30, categoryLabels, func(text string, index int) {
 		if categoryMap[text] == -1 {
 			categoryModal := NewCategory(pages)
