@@ -10,7 +10,7 @@ import (
 )
 
 func NewTransaction(app *tview.Application, pages *tview.Pages) *tview.Flex {
-	form := tview.NewForm()
+	form := components.NewForm()
 
 	cs := services.NewCategoryService(api.CLIENT)
 	ts := services.NewTransactionService(api.CLIENT)
@@ -34,45 +34,48 @@ func NewTransaction(app *tview.Application, pages *tview.Pages) *tview.Flex {
 	}
 
 	//Form
-	form.AddInputField("Amount:", "", 30, nil, nil).
-		SetLabelColor(tcell.ColorCornflowerBlue).
-		SetFieldBackgroundColor(tcell.ColorDarkSlateGray)
-	form.AddDropDown("Type:", []string{"Income", "Expense"}, 0, nil)
+	amount := components.NewInputField("Amount:", 10, 17)
+	form.AddFormItem(amount)
+
+	type_ := components.NewDropDown("Type:", 10, 30, []string{"Income", "Outcome"}, nil)
+	form.AddFormItem(type_)
 
 	typeMap := map[string]int{
 		"Income":  1,
-		"Expense": 2,
+		"Outcome": 2,
 	}
 
-	form.AddDropDown("Currency:", []string{"UY", "USD"}, 0, nil)
+	//Currency dropdown
+	currency := components.NewDropDown("Currency:", 10, 30, []string{"UY", "USD"}, nil)
+	form.AddFormItem(currency)
 
 	currencyMap := map[string]int{
 		"USD": 1,
 		"UY":  2,
 	}
 
-	form.AddDropDown("Category:", categoryLabels, 0, func(option string, optionIndex int) {
-		if categoryMap[option] == -1 {
+	category := components.NewDropDown("Category: ", 10, 30, categoryLabels, func(text string, index int) {
+		if categoryMap[text] == -1 {
 			categoryModal := NewCategory(pages)
 			pages.AddPage("category", categoryModal, true, true)
 		}
 	})
+	form.AddFormItem(category)
 
-	form.AddTextArea("Notes:", "Add your notes...", 30, 4, 30, nil)
+	//text area for notes
+	notes := components.NewTextArea("Notes: ", "Add your notes...", 30)
+	form.AddFormItem(notes)
 
 	//Back button
-	backBtn := form.AddButton("Go Back", func() {
+	form.AddButton("Go Back", func() {
 		pages.SwitchToPage("home")
 	})
 
-	backBtn.SetButtonBackgroundColor(tcell.ColorLightGoldenrodYellow).
-		SetButtonTextColor(tcell.ColorBlack)
-
-	//Save form and validate
-	saveBtn := form.AddButton("Save", func() {
+	//Save button
+	form.AddButton("Save", func() {
 
 		//Check amount
-		amount, err := validators.CheckAmount(form.GetFormItem(0).(*tview.InputField).GetText())
+		amount, err := validators.CheckAmount(form.GetFormItem(0).(*components.InputField).GetText())
 
 		if err != nil {
 			modal := components.NewWarningModal(err.Error(), pages)
@@ -81,12 +84,12 @@ func NewTransaction(app *tview.Application, pages *tview.Pages) *tview.Flex {
 		}
 
 		//Get values from form
-		_, type_ := form.GetFormItem(1).(*tview.DropDown).GetCurrentOption()
+		_, type_ := form.GetFormItem(1).(*components.DropDown).GetCurrentOption()
 		_, currency := form.GetFormItem(2).(*tview.DropDown).GetCurrentOption()
 		_, category := form.GetFormItem(3).(*tview.DropDown).GetCurrentOption()
 		categoryID := categoryMap[category]
 
-		notes := form.GetFormItem(4).(*tview.TextArea).GetText()
+		notes := form.GetFormItem(4).(*components.TextArea).GetText()
 
 		//Pending, select account and subcategory in form
 		err = ts.Add(amount, 2, currencyMap[currency], typeMap[type_], categoryID, notes)
@@ -101,12 +104,12 @@ func NewTransaction(app *tview.Application, pages *tview.Pages) *tview.Flex {
 		pages.AddPage("modal", modal, true, true)
 
 	})
-	saveBtn.SetButtonBackgroundColor(tcell.ColorDarkGreen).
+	form.SetButtonBackgroundColor(tcell.ColorGray).
 		SetButtonTextColor(tcell.ColorWhite)
 
 	//Flex for return
 	flex := tview.NewFlex().SetDirection(tview.FlexColumn)
-	flex.SetBorder(true).SetTitle("NEW TRANSACTION").SetBorderColor(tcell.ColorDarkGreen).SetTitleAlign(0).SetTitleColor(tcell.ColorDarkOliveGreen)
+	flex.SetBorder(true).SetTitle("New Transaction").SetTitleAlign(1)
 	flex.AddItem(form, 30, 1, true)
 
 	return flex
