@@ -5,33 +5,14 @@ import (
 	"github.com/pedrooyarzun-uy/financial-cli/internal/api"
 	"github.com/pedrooyarzun-uy/financial-cli/internal/services"
 	"github.com/pedrooyarzun-uy/financial-cli/internal/ui/components"
+	"github.com/pedrooyarzun-uy/financial-cli/internal/ui/components/dropdowns"
 	"github.com/pedrooyarzun-uy/financial-cli/internal/ui/validators"
 	"github.com/rivo/tview"
 )
 
 func NewTransaction(app *tview.Application, pages *tview.Pages) *tview.Flex {
 	form := components.NewForm()
-
-	cs := services.NewCategoryService(api.CLIENT)
 	ts := services.NewTransactionService(api.CLIENT)
-
-	categoryOptions, err := cs.GetAllForDropdown("Add new category...", false)
-	if err != nil {
-		form.AddTextView("Error", err.Error(), 30, 1, false, false)
-	}
-
-	categoryLabels := make([]string, 0, len(categoryOptions))
-	categoryMap := make(map[string]int, len(categoryOptions))
-
-	for _, opt := range categoryOptions {
-		categoryLabels = append(categoryLabels, opt.Label)
-		categoryMap[opt.Label] = opt.Value
-	}
-
-	//TODO: add error modal with timeout and redirect to home
-	if err != nil {
-		form.AddTextView("Error", err.Error(), 30, 1, false, false)
-	}
 
 	//Amount dropdown
 	amount := components.NewInputField("Amount:", 10, 17)
@@ -54,15 +35,14 @@ func NewTransaction(app *tview.Application, pages *tview.Pages) *tview.Flex {
 		"USD": 1,
 		"UY":  2,
 	}
+	subcategory := dropdowns.NewSubCategoryDropdown("Subcategory...", 10, 30)
 
-	//Category dropdown
-	category := components.NewDropDown("Category: ", 10, 30, categoryLabels, func(text string, index int) {
-		if categoryMap[text] == -1 {
-			categoryModal := NewCategory(pages)
-			pages.AddPage("category", categoryModal, true, true)
-		}
+	category := dropdowns.NewCategoryDropdown("Category", 10, 30, func(categoryID int) {
+		subcategory.LoadSubCategories(categoryID)
 	})
+
 	form.AddFormItem(category)
+	form.AddFormItem(subcategory)
 
 	//text area for notes
 	notes := components.NewTextArea("Notes: ", "Add your notes...", 30)
@@ -88,8 +68,13 @@ func NewTransaction(app *tview.Application, pages *tview.Pages) *tview.Flex {
 		//Get values from form
 		_, type_ := form.GetFormItem(1).(*components.DropDown).GetCurrentOption()
 		_, currency := form.GetFormItem(2).(*tview.DropDown).GetCurrentOption()
-		_, category := form.GetFormItem(3).(*tview.DropDown).GetCurrentOption()
-		categoryID := categoryMap[category]
+		categoryID, ok := category.GetSelectedCategoryID()
+
+		if !ok {
+			modal := components.NewWarningModal("Please select a valid category", pages)
+			pages.AddPage("modal", modal, true, true)
+			return
+		}
 
 		notes := form.GetFormItem(4).(*components.TextArea).GetText()
 
