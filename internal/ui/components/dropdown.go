@@ -31,3 +31,9 @@ func NewDropDown(label string, labelWidth int, fieldWidth int, options []string,
 
 	return dropdown
 }
+
+func (d *DropDown) ClearOptions() {
+	for i := 0; i < d.GetOptionCount(); i++ {
+		d.RemoveOption(i)
+	}
+}
