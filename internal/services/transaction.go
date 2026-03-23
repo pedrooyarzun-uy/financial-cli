@@ -16,14 +16,15 @@ func NewTransactionService(client *api.ApiClient) *TransactionService {
 	return &TransactionService{apiClient: client}
 }
 
-func (s *TransactionService) Add(amount float64, account int, currency int, type_ int, category int, notes string) error {
+func (s *TransactionService) Add(amount float64, account int, currency int, type_ int, category int, subcategory int, notes string) error {
 	req := dto.AddTransactionReq{
-		Amount:   amount,
-		Account:  account,
-		Currency: currency,
-		Type:     type_,
-		Category: category,
-		Notes:    notes,
+		Amount:      amount,
+		Account:     account,
+		Currency:    currency,
+		Type:        type_,
+		Category:    category,
+		Subcategory: subcategory,
+		Notes:       notes,
 	}
 
 	res := dto.AddTransactionRes{}
