@@ -40,6 +40,7 @@ func (d *SubCategoryDropdown) LoadSubCategories(categoryId int) {
 
 	for _, opt := range options {
 		labels = append(labels, opt.Label)
+		d.subcategories[opt.Label] = opt.Value
 	}
 
 	// Update dropdown options
