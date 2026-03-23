@@ -51,3 +51,9 @@ func (d *SubCategoryDropdown) LoadSubCategories(categoryId int) {
 		}
 	})
 }
+
+func (d *SubCategoryDropdown) GetSelectedSubCategoryID() (int, bool) {
+	_, label := d.GetCurrentOption()
+	categoryID, ok := d.subcategories[label]
+	return categoryID, ok
+}
