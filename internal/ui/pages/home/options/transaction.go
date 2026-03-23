@@ -66,8 +66,9 @@ func NewTransaction(app *tview.Application, pages *tview.Pages) *tview.Flex {
 		}
 
 		//Get values from form
-		_, type_ := form.GetFormItem(1).(*components.DropDown).GetCurrentOption()
-		_, currency := form.GetFormItem(2).(*tview.DropDown).GetCurrentOption()
+		_, selectedType := type_.GetCurrentOption()
+		_, selectedCurrency := currency.GetCurrentOption()
+
 		categoryID, ok := category.GetSelectedCategoryID()
 
 		if !ok {
@@ -84,10 +85,10 @@ func NewTransaction(app *tview.Application, pages *tview.Pages) *tview.Flex {
 			return
 		}
 
-		notes := form.GetFormItem(4).(*components.TextArea).GetText()
+		notes := form.GetFormItem(5).(*components.TextArea).GetText()
 
 		//Pending, select account and subcategory in form
-		err = ts.Add(amount, 2, currencyMap[currency], typeMap[type_], categoryID, subcategoryID, notes)
+		err = ts.Add(amount, 10, currencyMap[selectedCurrency], typeMap[selectedType], categoryID, subcategoryID, notes)
 
 		if err != nil {
 			modal := components.NewWarningModal(err.Error(), pages)
