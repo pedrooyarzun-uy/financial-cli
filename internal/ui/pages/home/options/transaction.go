@@ -76,10 +76,18 @@ func NewTransaction(app *tview.Application, pages *tview.Pages) *tview.Flex {
 			return
 		}
 
+		subcategoryID, ok := subcategory.GetSelectedSubCategoryID()
+
+		if !ok {
+			modal := components.NewWarningModal("Please select a valid subcategory", pages)
+			pages.AddPage("modal", modal, true, true)
+			return
+		}
+
 		notes := form.GetFormItem(4).(*components.TextArea).GetText()
 
 		//Pending, select account and subcategory in form
-		err = ts.Add(amount, 2, currencyMap[currency], typeMap[type_], categoryID, notes)
+		err = ts.Add(amount, 2, currencyMap[currency], typeMap[type_], categoryID, subcategoryID, notes)
 
 		if err != nil {
 			modal := components.NewWarningModal(err.Error(), pages)
