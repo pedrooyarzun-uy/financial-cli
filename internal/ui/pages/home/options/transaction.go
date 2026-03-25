@@ -31,19 +31,16 @@ func NewTransaction(app *tview.Application, pages *tview.Pages) *tview.Flex {
 	}
 
 	//Currency dropdown
-	currency := components.NewDropDown("Currency:", 10, 30, []string{"UY", "USD"}, nil)
+	currency := dropdowns.NewCurrencyDropdown("Currency:", 10, 30)
 	form.AddFormItem(currency)
 
-	currencyMap := map[string]int{
-		"USD": 1,
-		"UY":  2,
-	}
+	//Subcategory dropdown
 	subcategory := dropdowns.NewSubCategoryDropdown("Subcategory...", 10, 30)
 
+	//Category dropdown
 	category := dropdowns.NewCategoryDropdown("Category", 10, 30, func(categoryID int) {
 		subcategory.LoadSubCategories(categoryID)
 	})
-
 	form.AddFormItem(category)
 	form.AddFormItem(subcategory)
 
@@ -70,7 +67,6 @@ func NewTransaction(app *tview.Application, pages *tview.Pages) *tview.Flex {
 
 		//Get values from form
 		_, selectedType := type_.GetCurrentOption()
-		_, selectedCurrency := currency.GetCurrentOption()
 
 		categoryID, ok := category.GetSelectedCategoryID()
 
@@ -96,10 +92,18 @@ func NewTransaction(app *tview.Application, pages *tview.Pages) *tview.Flex {
 			return
 		}
 
+		currencyID, ok := currency.GetSelectedCurrencyID()
+
+		if !ok {
+			modal := components.NewWarningModal("Please select a valid currency", pages)
+			pages.AddPage("modal", modal, true, true)
+			return
+		}
+
 		notes := form.GetFormItem(6).(*components.TextArea).GetText()
 
 		//Pending, select account and subcategory in form
-		err = ts.Add(amount, accountID, currencyMap[selectedCurrency], typeMap[selectedType], categoryID, subcategoryID, notes)
+		err = ts.Add(amount, accountID, currencyID, typeMap[selectedType], categoryID, subcategoryID, notes)
 
 		if err != nil {
 			modal := components.NewWarningModal(err.Error(), pages)
