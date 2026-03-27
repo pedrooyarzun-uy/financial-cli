@@ -18,17 +18,13 @@ func NewTransaction(app *tview.Application, pages *tview.Pages) *tview.Flex {
 	amount := components.NewInputField("Amount:", 10, 17)
 	form.AddFormItem(amount)
 
+	//Account dropdown
 	account := dropdowns.NewAccountDropdown("Account...", 10, 30)
 	form.AddFormItem(account)
 
 	//Type dropdown
-	type_ := components.NewDropDown("Type:", 10, 30, []string{"Income", "Outcome"}, nil)
+	type_ := dropdowns.NewTypeDropdown("Type:", 10, 30)
 	form.AddFormItem(type_)
-
-	typeMap := map[string]int{
-		"Income":  1,
-		"Outcome": 2,
-	}
 
 	//Currency dropdown
 	currency := dropdowns.NewCurrencyDropdown("Currency:", 10, 30)
@@ -44,7 +40,7 @@ func NewTransaction(app *tview.Application, pages *tview.Pages) *tview.Flex {
 	form.AddFormItem(category)
 	form.AddFormItem(subcategory)
 
-	//text area for notes
+	//Notes textarea
 	notes := components.NewTextArea("Notes: ", "Add your notes...", 30)
 	form.AddFormItem(notes)
 
@@ -58,52 +54,57 @@ func NewTransaction(app *tview.Application, pages *tview.Pages) *tview.Flex {
 
 		//Check amount
 		amount, err := validators.CheckAmount(form.GetFormItem(0).(*components.InputField).GetText())
-
 		if err != nil {
 			modal := components.NewWarningModal(err.Error(), pages)
 			pages.AddPage("modal", modal, true, true)
 			return
 		}
 
-		//Get values from form
-		_, selectedType := type_.GetCurrentOption()
+		//TypeID
+		typeID, ok := type_.GetSelectedTypeID()
+		if !ok {
+			modal := components.NewWarningModal("Please select a valid type of transaction", pages)
+			pages.AddPage("modal", modal, true, true)
+			return
+		}
 
+		//CategoryID
 		categoryID, ok := category.GetSelectedCategoryID()
-
 		if !ok {
 			modal := components.NewWarningModal("Please select a valid category", pages)
 			pages.AddPage("modal", modal, true, true)
 			return
 		}
 
+		//SubcategoryID
 		subcategoryID, ok := subcategory.GetSelectedSubCategoryID()
-
 		if !ok {
 			modal := components.NewWarningModal("Please select a valid subcategory", pages)
 			pages.AddPage("modal", modal, true, true)
 			return
 		}
 
+		//AccountID
 		accountID, ok := account.GetSelectedAccountID()
-
 		if !ok {
 			modal := components.NewWarningModal("Please select a valid account", pages)
 			pages.AddPage("modal", modal, true, true)
 			return
 		}
 
+		//CurrencyID
 		currencyID, ok := currency.GetSelectedCurrencyID()
-
 		if !ok {
 			modal := components.NewWarningModal("Please select a valid currency", pages)
 			pages.AddPage("modal", modal, true, true)
 			return
 		}
 
+		//Notes value
 		notes := form.GetFormItem(6).(*components.TextArea).GetText()
 
-		//Pending, select account and subcategory in form
-		err = ts.Add(amount, accountID, currencyID, typeMap[selectedType], categoryID, subcategoryID, notes)
+		//Send to backend
+		err = ts.Add(amount, accountID, currencyID, typeID, categoryID, subcategoryID, notes)
 
 		if err != nil {
 			modal := components.NewWarningModal(err.Error(), pages)
@@ -113,12 +114,12 @@ func NewTransaction(app *tview.Application, pages *tview.Pages) *tview.Flex {
 
 		modal := components.NewSuccessModal("Transaction saved correctly!", pages)
 		pages.AddPage("modal", modal, true, true)
-
 	})
+
+	//Render form
 	form.SetButtonBackgroundColor(tcell.ColorGray).
 		SetButtonTextColor(tcell.ColorWhite)
 
-	//Flex for return
 	flex := tview.NewFlex().SetDirection(tview.FlexColumn)
 	flex.SetBorder(true).SetTitle("New Transaction").SetTitleAlign(1)
 	flex.AddItem(form, 30, 1, true)
