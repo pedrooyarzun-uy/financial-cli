@@ -19,6 +19,8 @@ func NewTypeDropdown(label string, labelWidth int, fieldWidth int) *TypeDropdown
 		},
 	}
 
+	d.SetOptions([]string{"Income", "Outcome"}, nil)
+
 	return &component
 
 }
