@@ -56,7 +56,12 @@ func (d *CategoryDropdown) LoadCategories() {
 }
 
 func (d *CategoryDropdown) GetSelectedCategoryID() (int, bool) {
-	_, label := d.GetCurrentOption()
+	idx, label := d.GetCurrentOption()
+
+	if idx < 0 || label == "" {
+		return 0, true
+	}
+
 	categoryID, ok := d.categories[label]
 	return categoryID, ok
 }
