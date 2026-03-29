@@ -1,6 +1,8 @@
 package options
 
 import (
+	"fmt"
+
 	"github.com/gdamore/tcell/v2"
 	"github.com/pedrooyarzun-uy/financial-cli/internal/api"
 	"github.com/pedrooyarzun-uy/financial-cli/internal/services"
@@ -19,7 +21,7 @@ func NewTransaction(app *tview.Application, pages *tview.Pages) *tview.Flex {
 	form.AddFormItem(amount)
 
 	//Account dropdown
-	account := dropdowns.NewAccountDropdown("Account...", 10, 30)
+	account := dropdowns.NewAccountDropdown("Account:", 10, 30)
 	form.AddFormItem(account)
 
 	//Type dropdown
@@ -31,10 +33,10 @@ func NewTransaction(app *tview.Application, pages *tview.Pages) *tview.Flex {
 	form.AddFormItem(currency)
 
 	//Subcategory dropdown
-	subcategory := dropdowns.NewSubCategoryDropdown("Subcategory...", 10, 30)
+	subcategory := dropdowns.NewSubCategoryDropdown("Subcategory:", 10, 30)
 
 	//Category dropdown
-	category := dropdowns.NewCategoryDropdown("Category", 10, 30, func(categoryID int) {
+	category := dropdowns.NewCategoryDropdown("Category:", 10, 30, func(categoryID int) {
 		subcategory.LoadSubCategories(categoryID)
 	})
 	form.AddFormItem(category)
@@ -71,6 +73,7 @@ func NewTransaction(app *tview.Application, pages *tview.Pages) *tview.Flex {
 		//CategoryID
 		categoryID, ok := category.GetSelectedCategoryID()
 		if !ok {
+			fmt.Println(categoryID, ok)
 			modal := components.NewWarningModal("Please select a valid category", pages)
 			pages.AddPage("modal", modal, true, true)
 			return
