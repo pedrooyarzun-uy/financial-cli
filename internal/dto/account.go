@@ -13,3 +13,7 @@ type AddAccountReq struct {
 	Currency int    `json:"currency"`
 	Bank     int    `json:"bank"`
 }
+
+type AddAccountRes struct {
+	Message string `json:"message"`
+}
