@@ -33,3 +33,18 @@ func (s *AccountService) GetAllForDropdown() ([]DropdownOption, error) {
 
 	return result, nil
 }
+
+func (s *AccountService) Add(name string, number string, currency int, bank int) error {
+	req := dto.AddAccountReq{
+		Name:     name,
+		Number:   number,
+		Currency: currency,
+		Bank:     bank,
+	}
+
+	res := dto.AddAccountRes{}
+
+	err := s.apiClient.PostMethod("/account/create", &res, req, false)
+
+	return err
+}
