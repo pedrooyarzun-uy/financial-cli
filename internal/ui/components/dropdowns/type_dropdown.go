@@ -14,12 +14,13 @@ func NewTypeDropdown(label string, labelWidth int, fieldWidth int) *TypeDropdown
 	component := TypeDropdown{
 		DropDown: d,
 		types: map[string]int{
-			"Income":  1,
-			"Outcome": 2,
+			"Income":     1,
+			"Outcome":    2,
+			"Adjustment": 3,
 		},
 	}
 
-	d.SetOptions([]string{"Income", "Outcome"}, nil)
+	d.SetOptions([]string{"Income", "Outcome", "Adjustment"}, nil)
 
 	return &component
 
