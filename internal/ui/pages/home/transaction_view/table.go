@@ -35,10 +35,13 @@ func LoadData(table *tview.Table, transactions []dto.TransactionByDetail) {
 		table.SetCell(idx, 1, tview.NewTableCell(val.Subcategory))
 		table.SetCell(idx, 2, tview.NewTableCell(val.Currency))
 
+		//Set Colors
 		if val.Type == 1 {
 			table.SetCell(idx, 3, tview.NewTableCell(strconv.FormatFloat(val.Amount, 'f', 2, 64)).SetTextColor(tcell.ColorGreen))
 		} else if val.Type == 2 {
 			table.SetCell(idx, 3, tview.NewTableCell(strconv.FormatFloat(val.Amount, 'f', 2, 64)).SetTextColor(tcell.ColorRed))
+		} else if val.Type == 3 {
+			table.SetCell(idx, 3, tview.NewTableCell(strconv.FormatFloat(val.Amount, 'f', 2, 64)).SetTextColor(tcell.ColorGray))
 		}
 
 		table.SetCell(idx, 4, tview.NewTableCell(val.Date.Format("2006-01-02 15:04:05")))
