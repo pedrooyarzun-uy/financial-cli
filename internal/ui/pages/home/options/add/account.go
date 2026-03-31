@@ -12,27 +12,49 @@ func NewAddAccount(app *tview.Application, pages *tview.Pages) *tview.Flex {
 	//as := services.NewAccountService(api.CLIENT)
 
 	//Name Input
-	name := components.NewInputField("Name:", 10, 17)
+	name := components.NewInputField("Name: [red::b]*", 10, 30)
 	form.AddFormItem(name)
 
 	//Number Input
-	number := components.NewInputField("Number:", 10, 17)
+	number := components.NewInputField("Number: ", 10, 30)
 	form.AddFormItem(number)
 
 	//Bank Dropdown
-	bank := dropdowns.NewBankDropdown("Bank", 10, 30)
+	bank := dropdowns.NewBankDropdown("Bank: [red::b]*", 10, 30)
 	form.AddFormItem(bank)
 
 	//Currency Dropdown
-	currency := dropdowns.NewCurrencyDropdown("Currency:", 10, 30)
+	currency := dropdowns.NewCurrencyDropdown("Currency: [red::b]*", 10, 30)
 	form.AddFormItem(currency)
 
-	form.SetButtonBackgroundColor(tcell.ColorGray).
-		SetButtonTextColor(tcell.ColorWhite)
+	form.AddButton("Go Back", func() {
+		pages.SwitchToPage("add_page")
+	})
+	form.AddButton("Add Account", nil).SetButtonBackgroundColor(tcell.ColorGreenYellow)
 
-	flex := tview.NewFlex().SetDirection(tview.FlexColumn)
-	flex.SetBorder(true).SetTitle("Add Account").SetTitleAlign(1)
-	flex.AddItem(form, 30, 1, true)
+	form.SetButtonTextColor(tcell.ColorWhite).SetButtonBackgroundColor(tcell.ColorGray)
+
+	titleText := tview.NewTextView().
+		SetText("[yellow::b]Enter account data\n[white::b]Fields with [red::b]* [white::b]are mandatories").
+		SetTextAlign(tview.AlignCenter)
+	titleText.SetDynamicColors(true)
+
+	centeredForm := tview.NewFlex().
+		AddItem(nil, 0, 1, false).
+		AddItem(form, 60, 0, true).
+		AddItem(nil, 0, 1, false)
+
+	content := tview.NewFlex().
+		SetDirection(tview.FlexRow).
+		AddItem(titleText, 2, 0, false).
+		AddItem(nil, 1, 0, false).
+		AddItem(centeredForm, 0, 1, true)
+
+	flex := tview.NewFlex().SetDirection(tview.FlexRow)
+	flex.SetBorder(true).SetTitle("Add Account").SetTitleAlign(tview.AlignCenter)
+	flex.AddItem(nil, 0, 1, false)
+	flex.AddItem(content, 14, 0, true)
+	flex.AddItem(nil, 0, 1, false)
 
 	return flex
 }
