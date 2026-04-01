@@ -12,10 +12,10 @@ func NewAdd(app *tview.Application, pages *tview.Pages) *tview.Flex {
 	main := tview.NewFlex()
 
 	list := tview.NewList().
-		AddItem("Add expense", "", 'e', func() {
+		AddItem("Add expense", "", 'a', func() {
 			pages.SwitchToPage("add_transaction")
 		}).
-		AddItem("Add account", "", 'e', func() {
+		AddItem("Add account", "", 's', func() {
 			pages.SwitchToPage("add_account")
 		})
 
