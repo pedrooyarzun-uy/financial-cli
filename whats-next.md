@@ -15,7 +15,7 @@
 - 3. Desplegable de types - DONE
 
 - Agregar tipo adjustment para corregir desbalances entre app y banco
-- 1. Catalogo de tipos
-- 2. Agregar implementacion en el backend
-- 3. Servicio de frontend
-- 4. Implementar en desplegable
+- 1. Catalogo de tipos - DONE
+- 2. Agregar implementacion en el backend - DONE
+- 3. Servicio de frontend - DONE
+- 4. Implementar en desplegable - DONE
