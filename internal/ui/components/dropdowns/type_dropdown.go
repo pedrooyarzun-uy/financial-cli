@@ -4,8 +4,7 @@ import "github.com/pedrooyarzun-uy/financial-cli/internal/ui/components"
 
 type TypeDropdown struct {
 	*components.DropDown
-	types      map[string]int
-	onSelected func(typeId int)
+	types map[string]int
 }
 
 func NewTypeDropdown(label string, labelWidth int, fieldWidth int) *TypeDropdown {
