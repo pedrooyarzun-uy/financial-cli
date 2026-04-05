@@ -19,3 +19,22 @@
 - 2. Agregar implementacion en el backend - DONE
 - 3. Servicio de frontend - DONE
 - 4. Implementar en desplegable - DONE
+
+- Implemenentacion de tarjetas de credito
+- 1. Crear tabla para tarjetas de credito (
+    type CreditCard struct {
+        Id         int
+        Name       string
+        BankID     int
+        CurrencyID int
+        OwnerID    int
+        CloseDay   int
+        DueDay     int
+        Limit      float64
+        CreatedAt  time.Time
+    }
+)
+
+- 2. Crear repositorios y servicios para poder agregar una tarjeta.
+- 3. Ajustar tabla de transacciones para poder agregar gastos de tarjetas de credito
+- 4. Pasar a una vista la traida de informacion de las transactions
