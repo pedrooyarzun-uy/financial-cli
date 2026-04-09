@@ -1,6 +1,8 @@
 package add
 
 import (
+	"fmt"
+
 	"github.com/gdamore/tcell/v2"
 	"github.com/pedrooyarzun-uy/financial-cli/internal/ui/components"
 	"github.com/pedrooyarzun-uy/financial-cli/internal/ui/components/dropdowns"
@@ -38,9 +40,65 @@ func NewAddCreditCard(app *tview.Application, pages *tview.Pages) *tview.Flex {
 
 	form.SetButtonTextColor(tcell.ColorWhite).SetButtonBackgroundColor(tcell.ColorGray)
 
+	titleText := tview.NewTextView().
+		SetText("[yellow::b]Enter credit card data\n[white]Fields with [red::b]* [white]are mandatories").
+		SetTextAlign(tview.AlignCenter)
+	titleText.SetDynamicColors(true)
+
+	preview := tview.NewTextView().
+		SetDynamicColors(true).
+		SetWrap(true)
+	preview.SetBorder(true).SetTitle("Credit Card Preview")
+
+	tips := tview.NewTextView().
+		SetDynamicColors(true).
+		SetWrap(true).
+		SetText(
+			"[yellow::b]Tips\n\n" +
+				"[white]- Name and Bank are required\n" +
+				"[white]- Close and Due Day are required\n" +
+				"[white]- Credit Limit is mandatory\n" +
+				"[white]- Use a clear name, e.g.:\n" +
+				"  [green]Savings Account[-], [green]Payroll[-], [green]Cash[-]\n",
+		)
+	tips.SetBorder(true).SetTitle("Help")
+
+	preview.SetText(fmt.Sprintf(
+		"[yellow::b]Credit Card Preview\n\n" +
+			"[white]Name: [green]\n" +
+			"[white]Bank: [green]\n" +
+			"[white]Close Day: [green]\n" +
+			"[white]Due Day: [green]\n" +
+			"[white]Credit Limit: [green]\n",
+	))
+
 	leftPanel := tview.NewFlex().
 		SetDirection(tview.FlexRow).
 		AddItem(form, 0, 1, true)
 
-	return leftPanel
+	rightPanel := tview.NewFlex().
+		SetDirection(tview.FlexRow).
+		AddItem(preview, 0, 3, false).
+		AddItem(nil, 1, 0, false).
+		AddItem(tips, 0, 2, false)
+
+	body := tview.NewFlex().
+		SetDirection(tview.FlexColumn).
+		AddItem(leftPanel, 0, 2, true).
+		AddItem(nil, 2, 0, false).
+		AddItem(rightPanel, 0, 1, false)
+
+	content := tview.NewFlex().
+		SetDirection(tview.FlexRow).
+		AddItem(titleText, 2, 0, false).
+		AddItem(nil, 1, 0, false).
+		AddItem(body, 0, 1, true)
+
+	flex := tview.NewFlex().SetDirection(tview.FlexRow)
+	flex.SetBorder(true).SetTitle("Add Credit Card").SetTitleAlign(tview.AlignCenter)
+	flex.AddItem(nil, 0, 1, false)
+	flex.AddItem(content, 22, 0, true)
+	flex.AddItem(nil, 0, 1, false)
+
+	return flex
 }
