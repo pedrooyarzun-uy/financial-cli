@@ -4,12 +4,18 @@ import (
 	"fmt"
 
 	"github.com/gdamore/tcell/v2"
+	"github.com/pedrooyarzun-uy/financial-cli/internal/api"
+	"github.com/pedrooyarzun-uy/financial-cli/internal/helpers"
+	"github.com/pedrooyarzun-uy/financial-cli/internal/services"
 	"github.com/pedrooyarzun-uy/financial-cli/internal/ui/components"
 	"github.com/pedrooyarzun-uy/financial-cli/internal/ui/components/dropdowns"
+	"github.com/pedrooyarzun-uy/financial-cli/internal/ui/validators"
 	"github.com/rivo/tview"
 )
 
 func NewAddCreditCard(app *tview.Application, pages *tview.Pages) *tview.Flex {
+	ccs := services.NewCreditCardService(api.CLIENT)
+
 	form := components.NewForm()
 
 	//Name input
@@ -36,7 +42,51 @@ func NewAddCreditCard(app *tview.Application, pages *tview.Pages) *tview.Flex {
 		pages.SwitchToPage("add_page")
 	})
 
-	form.AddButton("Add Credit Card", nil)
+	form.AddButton("Add Credit Card", func() {
+		name := form.GetFormItem(0).(*components.InputField).GetText()
+		bankID, ok := bank.GetSelectedBankID()
+
+		if !ok {
+			modal := components.NewWarningModal("Please select a valid bank", pages)
+			pages.AddPage("modal", modal, true, true)
+			return
+		}
+
+		closeDay, ok := helpers.StringToInt(form.GetFormItem(2).(*components.InputField).GetText())
+
+		if !ok || closeDay < 1 || closeDay > 31 {
+			modal := components.NewWarningModal("Close Day must be a number between 1 and 31", pages)
+			pages.AddPage("modal", modal, true, true)
+			return
+		}
+
+		dueDay, ok := helpers.StringToInt(form.GetFormItem(3).(*components.InputField).GetText())
+
+		if !ok || dueDay < 1 || dueDay > 31 {
+			modal := components.NewWarningModal("Due Day must be a number between 1 and 31", pages)
+			pages.AddPage("modal", modal, true, true)
+			return
+		}
+
+		creditLimit, err := validators.CheckAmount(form.GetFormItem(4).(*components.InputField).GetText())
+
+		if err != nil {
+			modal := components.NewWarningModal("Limit must be a number (float)", pages)
+			pages.AddPage("modal", modal, true, true)
+			return
+		}
+
+		err = ccs.Add(name, bankID, closeDay, dueDay, creditLimit)
+
+		if err != nil {
+			modal := components.NewWarningModal(err.Error(), pages)
+			pages.AddPage("modal", modal, true, true)
+			return
+		}
+
+		modal := components.NewSuccessModal("Credit Card saved correctly!", pages)
+		pages.AddPage("modal", modal, true, true)
+	})
 
 	form.SetButtonTextColor(tcell.ColorWhite).SetButtonBackgroundColor(tcell.ColorGray)
 
